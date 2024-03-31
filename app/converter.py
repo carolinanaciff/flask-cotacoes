@@ -1,17 +1,19 @@
-import requests
+import aiohttp
 
-def sync_converter(from_currency, to_currency, value):
+async def async_converter(from_currency, to_currency, value):
     from_currency = from_currency.upper()
     to_currency = to_currency.upper()
     url = f'https://economia.awesomeapi.com.br/last/{from_currency}-{to_currency}'
 
     try:
-        response = requests.get(url)
-        data = response.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=url) as response:
+                data = await response.json()
+    
     except Exception as ex:
         print(ex)
         return None
-
+    
     try:
         json_key = f'{from_currency}{to_currency}'.upper()
         ask = float(data[json_key]['ask'])
